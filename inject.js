@@ -11,7 +11,7 @@ for (var i = 0; i < elementos.length; i++) {
   //buscamos la URL relativa con regex
   var urlRelativa = textoOnclick.match(/RecuperaCfdi[^']+/);
   //si la encontramos:
-  if (urlRelativa.length > 0) {
+  if (urlRelativa && urlRelativa.length > 0) {
     var urlAbsoluta =
       "https://portalcfdi.facturaelectronica.sat.gob.mx/" + urlRelativa[0];
     links[0].push(urlAbsoluta);
@@ -20,21 +20,18 @@ for (var i = 0; i < elementos.length; i++) {
 
 //array para los PDF
 links[1] = new Array();
-var elementos = document.getElementsByName("BtnRI");
-
-//buscamos formar una URL así:
-//https://portalcfdi.facturaelectronica.sat.gob.mx/RepresentacionImpresa.aspx?Datos=A7XIi6dxVyy88F6VFk+aZwvT7OhvgJ8So2zMvxdzX/elmGt7llni1pxlgjOhQmFjRADq8eWNeERAySUiNM/PVDBJVsTY2yGu07lGlXY25GwjkSrMMwyuUOxkdlTsNucdovXJrV6KDf5qDiLsWq0wP1ps5F3jms/1YO/2fIQI4orKQHHRfY+8RFzTZMV0TVICPGxJn5bCQe87BixcjRmiqdSAb1Nk+/3HoVXyH+YOW6z0MWe5aFL5y/zV64a1osORkUGfGCfz+QDg+T6tQpIy5Tfn3BbXxDyw/Ma3HiieAW3MeRHV5uZ6h3RC280Ldl8pguKIuS7OrhXyOkKuvcAJ2kM1n5oojoJShc7sqoFPC083V5wU0UIa5ZToeUoU8/k3yfNYDy91JSi3PKAeoDbfokaT4AWQtZ0MJwtU+F59eDIqBgO1aFG1Yn3LsbWXf2ESNfBGX5fuUve6jGOscz18qmufid2yG+vcoveEbVb+mSHAx7srspNeoAYARr3C1zAl6zgj07kuahAyt+ihcbAosdNWZkzy9Y/2MVEk8H67uVg=
+var elementosPdf = document.getElementsByName("BtnRI");
 
 //por cada elemento buscamos el texto adentro:
-for (var i = 0; i < elementos.length; i++) {
+for (var i = 0; i < elementosPdf.length; i++) {
   //buscamos en el HTML
-  var textoOnclick = elementos[i].outerHTML;
+  var textoOnclick = elementosPdf[i].outerHTML;
   //buscamos la URL relativa
   var urlRelativa = textoOnclick.match(
-    /recuperaRepresentacionImpresa\(\'[^']+/,
+    /recuperaRepresentacionImpresa\(\'[^']+/
   );
   //si la encontramos:
-  if (urlRelativa.length > 0) {
+  if (urlRelativa && urlRelativa.length > 0) {
     //extraemos el ID
     var id = urlRelativa[0].replace(/recuperaRepresentacionImpresa\(\'/g, "");
     var urlAbsoluta =
@@ -53,7 +50,7 @@ for (var i = 0; i < folios.length; i++) {
   links[2].push(folio);
 }
 
-// console.log(links);
 //enviamos el array de arrays a la ventanita, al listener
-if (links[0].length > 0 && links[1].length > 0 && links[2].length > 0)
-  chrome.extension.sendRequest(links);
+if (links[0].length > 0 || links[1].length > 0 || links[2].length > 0) {
+  chrome.runtime.sendMessage({ action: "links_found", links: links });
+}
