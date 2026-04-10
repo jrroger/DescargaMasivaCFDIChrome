@@ -17,21 +17,27 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container text-center">
+    <div class="container text-center" style="min-width: 250px;">
       <h4 class="py-2">Descarga Masiva SAT</h4>
 
       <div class="py-2">
         <button class="btn btn-info btn-sm" id="iralsat">Ir al SAT</button>
       </div>
+      
+      <div class="py-2 px-3">
+        <label for="carpeta" class="small font-weight-bold">Carpeta de destino:</label>
+        <input type="text" id="carpeta" class="form-control form-control-sm text-center" value="CFDI_Descargas" placeholder="Ej. Facturas_Abril">
+      </div>
+
       <div class="py-2">
         <button class="btn btn-primary btn-sm" id="descargarxml">
-          <span class="badge badge-light" id="cuenta-xml"></span>
+          <span class="badge badge-light" id="cuenta-xml">0</span>
           Descargar XML
         </button>
       </div>
       <div class="py-2">
         <button class="btn btn-primary btn-sm" id="descargarpdf">
-          <span class="badge badge-light" id="cuenta-pdf"></span>
+          <span class="badge badge-light" id="cuenta-pdf">0</span>
           Descargar PDF
         </button>
       </div>
@@ -41,14 +47,14 @@
         </button>
       </div>
       <div class="py-2">
-        <div id="status"></div>
+        <div id="status" class="small text-muted"></div>
       </div>
       <div class="py-2">
         <button class="btn btn-default btn-sm" id="manual">
           Manual de uso
         </button>
       </div>
-      <div class="py-2">
+      <div class="py-2 small">
         Desarrollado por: <br /><a href="#" id="enlace">Eduardo Aranda</a>
       </div>
     </div>
