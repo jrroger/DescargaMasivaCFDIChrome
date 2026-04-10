@@ -4,10 +4,6 @@ Descarga masivamente los CFDI (XML y PDF) del [SAT México](https://sat.gob.mx/)
 
 ![portada](https://user-images.githubusercontent.com/4065733/44919085-36755880-ad02-11e8-97a0-c6620ab20bf8.png)
 
-# Instalación
-
-### Instala la extensión **GRATIS** desde [la chrome web store](https://chrome.google.com/webstore/detail/descarga-masiva-facturas/cmcidfkdmfopijnadkbdbhknfkjodmec)
-
 # Cómo Funciona
 
 ### 1) Click en el icono
@@ -44,7 +40,7 @@ Para proyectos de programación escribe a: eduardoarandah@gmail.com
 
 # Si deseas contribuir
 
-**He invertido mi tiempo realizado este proyecto con la intención de ayudar a todos.**
+**He invertido mi tiempo realizando este proyecto con la intención de ayudar a todos.**
 
 **Si te ha hecho la vida más fácil, puedes contribuir con una donación**
 
@@ -58,4 +54,4 @@ _Ing. Eduardo Aranda Hernández_
 
 # Versiones
 
--   0.22 Ahora se ejecuta una descarga cada segundo, para evitar sobrecargas
+-   1.00 Se elimina la descarga por segundo, solo tienes que seleccionar la carpeta de descarga una vez y la extensión hace el trabajo
