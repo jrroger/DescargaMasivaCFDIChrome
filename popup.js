@@ -1,35 +1,62 @@
 var allLinks = [[], [], []];
+var globalDirHandle = null; // Guarda la carpeta elegida para no volver a preguntar
 
-function descargarEnLote(tipo) {
-    var carpetaInput = document.getElementById("carpeta").value.trim();
-    var carpeta = carpetaInput ? (carpetaInput + "/") : "";
+async function descargarEnLote(tipo) {
     var extension = tipo === 'xml' ? '.xml' : '.pdf';
     var urls = tipo === 'xml' ? [...allLinks[0]] : [...allLinks[1]];
     var nombres = [...allLinks[2]];
     
     if (urls.length === 0) return;
 
-    document.getElementById("status").textContent = "Descargando " + urls.length + " " + tipo.toUpperCase() + "s...";
-
-    // Descargar en lote con un pequeño retraso para no saturar el navegador
-    var delay = 100; 
-    urls.forEach((url, index) => {
-        setTimeout(() => {
-            var nombre = nombres[index] || ("documento_" + index);
-            chrome.downloads.download({
-                url: url,
-                filename: carpeta + nombre + extension,
-                saveAs: false // Forzar que no pregunte si es posible
+    try {
+        // 1. Solicitar el directorio al usuario (SOLO UNA VEZ)
+        if (!globalDirHandle) {
+            globalDirHandle = await window.showDirectoryPicker({
+                id: 'cfdi_downloads',
+                mode: 'readwrite'
             });
-            
-            if (index === urls.length - 1) {
-                document.getElementById("status").textContent = "¡Descarga de " + tipo.toUpperCase() + " finalizada!";
+        }
+
+        document.getElementById("status").textContent = "Iniciando descarga de " + urls.length + " " + tipo.toUpperCase() + "s...";
+
+        // 2. Recorrer y descargar cada archivo
+        for (let i = 0; i < urls.length; i++) {
+            let url = urls[i];
+            let nombre = nombres[i] || ("documento_" + i);
+            let filename = nombre + extension;
+
+            // Actualizar el texto en la ventanita para ver el progreso
+            document.getElementById("status").textContent = `Descargando ${i + 1} de ${urls.length}: ${filename}`;
+
+            // Descargar el archivo usando fetch (toma las credenciales del SAT automáticamente)
+            let response = await fetch(url);
+            if (!response.ok) {
+                console.error("Error al descargar", url);
+                continue; // Si uno falla, sigue con el próximo
             }
-        }, index * delay);
-    });
+            let blob = await response.blob();
+
+            // 3. Crear el archivo y guardarlo directamente en la carpeta elegida
+            const fileHandle = await globalDirHandle.getFileHandle(filename, { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+        }
+
+        document.getElementById("status").textContent = "¡Descarga de " + tipo.toUpperCase() + " finalizada con éxito!";
+    } catch (err) {
+        if (err.name === 'AbortError') {
+            document.getElementById("status").textContent = "Selección de carpeta cancelada.";
+        } else {
+            console.error(err);
+            document.getElementById("status").textContent = "Error: " + err.message;
+        }
+        // Reseteamos la variable por si hubo un error, para que vuelva a preguntar la próxima vez
+        globalDirHandle = null; 
+    }
 }
 
-//listener que recibe los elaces de inject.js
+// listener que recibe los enlaces de inject.js
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action === "links_found") {
         allLinks = request.links;
